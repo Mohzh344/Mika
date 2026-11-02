@@ -23,13 +23,13 @@ android {
         buildConfigField("String", "GIT_HASH", "\"$gitHash\"")
         // 关于页版本号后的 Beta 标记;出正式版时改成 false
         buildConfigField("boolean", "BETA", "true")
-        ndk { abiFilters.add("arm64-v8a") }
     }
 
     // This independent release targets arm64-v8a only and emits no universal APK.
     // 沙箱程序要从 nativeLibraryDir 直接执行,安装时必须解到磁盘
     packaging { jniLibs { useLegacyPackaging = true } }
 
+    // ABI splits choose the single arm64 APK; do not combine with ndk.abiFilters (AGP rejects both).
     splits {
         abi {
             isEnable = true
