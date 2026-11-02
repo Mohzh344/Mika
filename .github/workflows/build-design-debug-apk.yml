@@ -1,9 +1,6 @@
 name: Build Mika Debug APK (Arabic RTL)
 
 on:
-  push:
-    branches:
-      - design/material3-arabic-rtl
   workflow_dispatch:
 
 permissions:

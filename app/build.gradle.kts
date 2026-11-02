@@ -14,11 +14,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.wangzan101.mika"
+        applicationId = "com.mohzh344.mika.ar"
         minSdk = 30
         targetSdk = 35
-        versionCode = 34
-        versionName = "0.1.33"
+        versionCode = 35
+        versionName = "0.1.33-ar.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "GIT_HASH", "\"$gitHash\"")
         // 关于页版本号后的 Beta 标记;出正式版时改成 false
@@ -52,7 +52,20 @@ android {
     // 评测任务集(仓库根目录 eval/tasks)打进测试包的 assets,真机评测跑器从那里读题
     sourceSets.getByName("androidTest").assets.srcDir(rootProject.file("eval/tasks"))
 
+    signingConfigs {
+        create("mikaArabicRelease") {
+            storeFile = System.getenv("MIKA_SIGNING_KEYSTORE")?.let { file(it) }
+            storePassword = System.getenv("MIKA_SIGNING_STORE_PASSWORD")
+            keyAlias = System.getenv("MIKA_SIGNING_KEY_ALIAS") ?: "mika-arabic-release"
+            keyPassword = System.getenv("MIKA_SIGNING_KEY_PASSWORD")
+            storeType = "JKS"
+        }
+    }
+
     buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("mikaArabicRelease")
+        }
         // 真机验收时并排安装,保留发行版和用户数据;默认构建标识不变。
         if (providers.gradleProperty("devInstall").isPresent) getByName("debug") {
             applicationIdSuffix = ".dev"
