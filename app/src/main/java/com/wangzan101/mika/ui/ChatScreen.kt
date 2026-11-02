@@ -129,6 +129,7 @@ import com.wangzan101.mika.ui.components.GlassBackdrop
 import com.wangzan101.mika.ui.components.GlassBar
 import com.wangzan101.mika.ui.components.MikaButton
 import com.wangzan101.mika.ui.components.MikaCard
+import com.wangzan101.mika.ui.components.MikaLogo
 import com.wangzan101.mika.ui.components.PageBackground
 import com.wangzan101.mika.ui.components.TopBar
 import com.wangzan101.mika.ui.components.cardSurface
@@ -320,7 +321,7 @@ fun ChatScreen(
         val sub = ChatCopy.subtitle(last, last?.let(vm::livePlace)) ?: kept?.let { ChatCopy.KEPT_PAGE to ChatCopy.Tone.Ok }
         Column(Modifier.behindMenu(menuOpen) { lift.value }.onSizeChanged { topHeight = it.height }) {
             TopBar(
-                ChatCopy.APP_TITLE,
+                ChatCopy.title(ui.exchanges).ifBlank { ChatCopy.APP_TITLE },
                 left = MikaIcons.Menu, leftLabel = stringResource(R.string.chat_menu), onLeft = onOpenDrawer,
                 // 别的对话里还有任务在跑(并行时):菜单上一个小圆点,侧栏「进行中」里能切过去
                 leftBadge = others.isNotEmpty(),
@@ -451,6 +452,19 @@ private fun exampleIcon(kind: ChatCopy.ExampleKind): ImageVector = when (kind) {
 }
 
 @Composable
+private fun AssistantLabel() {
+    val c = MikaTheme.colors
+    Row(
+        Modifier.fillMaxWidth().padding(start = 2.dp, top = 3.dp, bottom = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        MikaLogo(24.dp)
+        Text(ChatCopy.APP_TITLE, style = MikaType.BodyStrong, color = c.ink)
+    }
+}
+
+@Composable
 private fun ExampleRow(icon: ImageVector, text: String, first: Boolean, onClick: () -> Unit) {
     val c = MikaTheme.colors
     Row(
@@ -478,6 +492,7 @@ private fun LazyListScope.exchange(
     kept: KeptPage? = null,
 ) {
     if (ex.goal.isNotEmpty()) item("u$index") { UserBubble(ex.goal, conversationId, key = "u$index") }
+    if (ex.goal.isNotEmpty()) item("agent$index") { AssistantLabel() }
     val active = ex.status.isActive()
     val answering = ex.status == ExchangeStatus.Working && !ex.draft.isNullOrBlank()
     if (active) {
@@ -552,13 +567,13 @@ internal fun UserBubble(text: String, conversationId: String?, note: String? = n
             }
             if (attached.hasAttachments && attached.words.isNotEmpty()) Spacer(Modifier.size(6.dp))
             if ((!attached.hasAttachments || attached.words.isNotEmpty()) && (paged.page == null || quoted.words.isNotEmpty())) UserMessage(conversationId, attached.words.takeIf { attached.hasAttachments } ?: quoted.words, ChatThumbWidth) { words ->
-                // 选择文字时蓝底上选中的底色用白色半透明,把手照旧是蓝色(画在气泡外面)
+                // 选择文字时气泡上的选区用反色半透明,把手仍用强调色。
                 val colors = MikaTheme.colors
-                CompositionLocalProvider(LocalTextSelectionColors provides TextSelectionColors(colors.accent, colors.onAccent.copy(alpha = 0.35f))) {
+                CompositionLocalProvider(LocalTextSelectionColors provides TextSelectionColors(colors.accent, colors.onUserBubble.copy(alpha = 0.35f))) {
                     MessageArea(
                         key, QuoteMessage.From.You, words, "selectable-user",
-                        Modifier.widthIn(max = max).background(colors.accent, MikaShapes.UserBubble),
-                        lifted = { LiftedMessage(MikaShapes.UserBubble, colors.accent) { UserBubbleText(words) } },
+                        Modifier.widthIn(max = max).background(colors.userBubble, MikaShapes.UserBubble),
+                        lifted = { LiftedMessage(MikaShapes.UserBubble, colors.userBubble) { UserBubbleText(words) } },
                     ) { UserBubbleText(words) }
                 }
             }
@@ -569,7 +584,7 @@ internal fun UserBubble(text: String, conversationId: String?, note: String? = n
 
 @Composable
 private fun UserBubbleText(words: String) {
-    Text(words, Modifier.padding(horizontal = 14.dp, vertical = 10.dp), style = BubbleText, color = MikaTheme.colors.onAccent)
+    Text(words, Modifier.padding(horizontal = 14.dp, vertical = 10.dp), style = BubbleText, color = MikaTheme.colors.onUserBubble)
 }
 
 /** 长按抬起的那条消息:[color] 底、带阴影;太长时(最高半屏)只露开头,下面裁掉。 */
@@ -645,7 +660,12 @@ private fun WorkBlock(ex: Exchange, reduceMotion: Boolean, backgroundNote: Boole
     val c = MikaTheme.colors
     val paused = ChatCopy.paused(ex.status)
     val elapsed = rememberElapsed(ex.startedAt)
-    Column(Modifier.fillMaxWidth().padding(bottom = 6.dp)) {
+    Column(
+        Modifier.fillMaxWidth().padding(bottom = 10.dp)
+            .background(c.surface, MikaShapes.Card)
+            .border(0.5.dp, c.edge, MikaShapes.Card)
+            .padding(horizontal = 14.dp, vertical = 12.dp),
+    ) {
         Row(
             Modifier.fillMaxWidth().heightIn(min = 28.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -661,7 +681,7 @@ private fun WorkBlock(ex: Exchange, reduceMotion: Boolean, backgroundNote: Boole
             )
             if (elapsed != null) Text(ChatCopy.clock(elapsed), style = ClockText, color = c.ink3)
         }
-        if (ex.steps.isNotEmpty()) StepLine(ex.steps, ex.stepActions, live = true, paused = paused)
+        if (ex.steps.isNotEmpty()) StepLine(ex.steps, ex.stepActions, live = true, paused = paused, railBackground = c.surface)
         // 跑的时候就能进运行过程(页面按秒接着长);结束后收进「做了 N 步 · 查看过程」那一行
         ex.runId?.let { id ->
             Text(
@@ -703,8 +723,12 @@ private enum class Dot { Done, Current, Paused, Dim }
  * 前面的收成一行,点开看全部。
  */
 @Composable
-private fun StepLine(steps: List<StepRow>, actions: Map<Int, List<StepAction>>, live: Boolean, paused: Boolean) {
+private fun StepLine(
+    steps: List<StepRow>, actions: Map<Int, List<StepAction>>, live: Boolean, paused: Boolean,
+    railBackground: Color? = null,
+) {
     val c = MikaTheme.colors
+    val railColor = railBackground ?: c.bg
     var all by rememberSaveable { mutableStateOf(!live) }
     // 哪几步点开了:按这一屏里的序号记,列表变长也不乱
     val expanded = remember { mutableStateMapOf<Int, Boolean>() }
@@ -716,7 +740,7 @@ private fun StepLine(steps: List<StepRow>, actions: Map<Int, List<StepAction>>, 
         },
     ) {
         if (hidden > 0) {
-            StepItem(ChatCopy.earlierSteps(hidden), "", Dot.Dim, current = false, link = true, onClick = { all = true })
+            StepItem(ChatCopy.earlierSteps(hidden), "", Dot.Dim, current = false, link = true, onClick = { all = true }, railBackground = railColor)
         }
         steps.drop(hidden).forEachIndexed { i, row ->
             val key = hidden + i
@@ -731,7 +755,7 @@ private fun StepLine(steps: List<StepRow>, actions: Map<Int, List<StepAction>>, 
             val detail = actions[row.step].orEmpty()
             StepItem(
                 row.text, row.subtitle, dot, current = dot == Dot.Current || dot == Dot.Paused,
-                actions = detail, open = open,
+                actions = detail, open = open, railBackground = railColor,
                 // 有具体动作才点得开:点开看这一步实际做了什么、对什么、结果如何
                 onClick = if (detail.isEmpty()) null else ({ expanded[key] = !open }),
             )
@@ -742,7 +766,7 @@ private fun StepLine(steps: List<StepRow>, actions: Map<Int, List<StepAction>>, 
 @Composable
 private fun StepItem(
     text: String, subtitle: String, dot: Dot, current: Boolean, link: Boolean = false, onClick: (() -> Unit)? = null,
-    actions: List<StepAction> = emptyList(), open: Boolean = false,
+    actions: List<StepAction> = emptyList(), open: Boolean = false, railBackground: Color,
 ) {
     val c = MikaTheme.colors
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
@@ -756,7 +780,7 @@ private fun StepItem(
             .heightIn(min = 28.dp).padding(vertical = 3.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.width(StepRail * 2), contentAlignment = Alignment.Center) { StepDot(dot) }
+        Box(Modifier.width(StepRail * 2), contentAlignment = Alignment.Center) { StepDot(dot, railBackground) }
         Spacer(Modifier.width(9.dp))
         Column(Modifier.weight(1f)) {
             Text(
@@ -788,7 +812,7 @@ private fun StepItem(
 
 /** 步骤点:8dp 实心;当前步外面一圈 3dp 的淡色光环。 */
 @Composable
-private fun StepDot(dot: Dot) {
+private fun StepDot(dot: Dot, railBackground: Color) {
     val c = MikaTheme.colors
     val (fill, ring) = when (dot) {
         Dot.Done -> c.ink3 to null
@@ -797,7 +821,7 @@ private fun StepDot(dot: Dot) {
         Dot.Paused -> c.warnSolid to c.warnSoft
     }
     // 底色先盖住竖线,点才是干净的
-    val bg = c.bg
+    val bg = railBackground
     Box(
         Modifier.size(14.dp).drawBehind {
             val center = Offset(size.width / 2, size.height / 2)
@@ -1213,7 +1237,7 @@ internal fun Composer(
                 VoiceFloat(vh, vState, title, backdrop, reduceMotion)
             }
             Box(Modifier.fillMaxWidth()) {
-            GlassBar(Modifier.fillMaxWidth().keepsKeyboard(), backdrop) {
+            GlassBar(Modifier.fillMaxWidth().keepsKeyboard(), backdrop, shape = RoundedCornerShape(24.dp)) {
                 if (attachPanel != null) {
                     val label = if (panel == Panel.Open) AttachCopy.CLOSE else AttachCopy.ADD
                     Box(

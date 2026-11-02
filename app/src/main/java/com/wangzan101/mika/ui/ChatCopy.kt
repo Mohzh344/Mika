@@ -32,10 +32,10 @@ object ChatCopy {
         Example(ExampleKind.App, tr(R.string.chat_example_creator)),
     )
 
-    /** 对话页顶栏的标题:固定是 App 名;副标题说此刻在做什么。 */
+    /** 没有标题时对话页顶栏的默认标题;有内容时用 [title] 显示当前对话名。 */
     const val APP_TITLE = "Mika"
 
-    /** 对话的名字:第一句话(只取第一行,附件那几行不算;只发了屏幕时是「你此刻的屏幕」);空对话为空。侧栏里用它称呼对话。 */
+    /** 对话的名字:第一句话(只取第一行,附件那几行不算;只发了屏幕时是「你此刻的屏幕」);空对话为空。用于顶栏和侧栏。 */
     fun title(exchanges: List<Exchange>): String =
         exchanges.firstOrNull { it.goal.isNotBlank() }?.goal?.let(::plainTitle).orEmpty()
 

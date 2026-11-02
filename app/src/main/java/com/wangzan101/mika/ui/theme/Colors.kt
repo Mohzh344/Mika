@@ -28,6 +28,9 @@ class MikaColors(
     val accentSoft: Color,
     /** 强调色上的文字和图标。 */
     val onAccent: Color,
+    /** 用户消息气泡独立于强调色,深色主题可使用高对比的青色。 */
+    val userBubble: Color,
+    val onUserBubble: Color,
     val ok: Color,
     val okSoft: Color,
     /** 「需要你」:[warn] 用于文字,[warnSolid] 用于圆点、描边。 */
@@ -38,7 +41,7 @@ class MikaColors(
     val badSoft: Color,
     /** 图标块的底。 */
     val neutralSoft: Color,
-    /** Mika 回答的底:比页面背景深一点点的灰,和用户的蓝色气泡区分开。 */
+    /** Mika 回答的底:比页面背景更亮一点的中性色,与用户消息气泡区分开。 */
     val answer: Color,
     /** 灰色胶囊、关着的开关。 */
     val greySoft: Color,
@@ -74,6 +77,8 @@ val LightColors = MikaColors(
     accent = Color(0xFF005FB8),
     accentSoft = Color(0xFFD8E6FF),
     onAccent = Color(0xFFFFFFFF),
+    userBubble = Color(0xFF005FB8),
+    onUserBubble = Color(0xFFFFFFFF),
     ok = Color(0xFF1F9D55),
     okSoft = Color(0x1F1F9D55),
     warn = Color(0xFFB86E00),
@@ -96,17 +101,19 @@ val LightColors = MikaColors(
 )
 
 val DarkColors = MikaColors(
-    bg = Color(0xFF0E0E10),
-    surface = Color(0xFF1A1A1D),
-    fill = Color(0x0FFFFFFF),
-    ink = Color(0xFFF2F2F4),
-    ink2 = Color(0xFFA4A5AD),
-    ink3 = Color(0xFF6C6D75),
-    hair = Color(0x14FFFFFF),
-    edge = Color(0x0FFFFFFF),
-    accent = Color(0xFFA8C7FA),
-    accentSoft = Color(0xFF263A53),
-    onAccent = Color(0xFF102A43),
+    bg = Color(0xFF080A0B),
+    surface = Color(0xFF252B2E),
+    fill = Color(0xFF30373A),
+    ink = Color(0xFFF2F5F6),
+    ink2 = Color(0xFFB7C1C4),
+    ink3 = Color(0xFF879397),
+    hair = Color(0x22FFFFFF),
+    edge = Color(0x21FFFFFF),
+    accent = Color(0xFF9DE5F0),
+    accentSoft = Color(0xFF1E444B),
+    onAccent = Color(0xFF07343D),
+    userBubble = Color(0xFF00616F),
+    onUserBubble = Color(0xFFFFFFFF),
     ok = Color(0xFF3CCF7A),
     okSoft = Color(0x243CCF7A),
     warn = Color(0xFFFFB340),
@@ -114,11 +121,11 @@ val DarkColors = MikaColors(
     warnSoft = Color(0x29FF9F0A),
     bad = Color(0xFFFF6961),
     badSoft = Color(0x24FF6961),
-    neutralSoft = Color(0x12FFFFFF),
-    answer = Color(0x0DFFFFFF),
-    greySoft = Color(0x38767680),
-    glass = Color(0xB81A1A1D),
-    glassEdge = Color(0x14FFFFFF),
+    neutralSoft = Color(0x1AFFFFFF),
+    answer = Color(0xFF151A1C),
+    greySoft = Color(0xFF3B4346),
+    glass = Color(0xCC1D2325),
+    glassEdge = Color(0x24FFFFFF),
     cardShadow = Color.Transparent,
     floatShadow = Color(0xFF000000),
     thumb = Color(0xFFFFFFFF),
