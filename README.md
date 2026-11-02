@@ -75,7 +75,7 @@ English · [简体中文](docs/readme/README.zh-CN.md) · [繁體中文](docs/re
 Then try saying: "Set alarms for 9:40 and 10:00 tomorrow morning" or "Check the weather at 8 every morning and tell me only if it will rain".
 
 > 💡 Have a computer handy? Send this to the AI agent on it and it will set everything up for you:<br/>
-> `Follow https://github.com/wangzan101/Mika/blob/main/docs/install-with-agent.en.md to install Mika on the Android phone connected over USB.`
+> `Follow https://github.com/Mohzh344/Mika/blob/main/docs/install-with-agent.en.md to install Mika on the Android phone connected over USB.`
 
 ## What it can do
 
@@ -149,7 +149,7 @@ Not sure your phone is up to it? Run Settings › Recovery & repair › **Compat
 
 **Can I use a model running on my own computer?** Yes: pick "Custom" as the provider and enter its address on your local network.
 
-**Is the app in English?** Yes. The app UI comes in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, Portuguese, Russian and Indonesian, follows your system language, and can be switched in Settings › Language. The built-in app and website knowledge is written in Chinese, but that doesn't limit you: the model reads it fine, and you can talk to Mika in English.
+**Is the app in English?** Yes. The app UI supports Arabic, English, Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, Portuguese, Russian and Indonesian, follows your system language, and can be switched in Settings › Language. The built-in app and website knowledge is written in Chinese, but that doesn't limit you: the model reads it fine, and you can talk to Mika in English.
 
 **Where do updates come from?** Only from this repository's [Releases](https://github.com/Mohzh344/Mika/releases); you can also upgrade in the app from About › Check for updates.
 
@@ -167,10 +167,10 @@ More answers are in the [FAQ](docs/faq.en.md).
 
 ## Star History
 
-<a href="https://star-history.com/#wangzan101/Mika&Date">
+<a href="https://star-history.com/#Mohzh344/Mika&Date">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=wangzan101/Mika&type=Date&theme=dark&v=20261101-1623" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=wangzan101/Mika&type=Date&v=20261101-1623" width="600" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Mohzh344/Mika&type=Date&theme=dark&v=20261101-1623" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Mohzh344/Mika&type=Date&v=20261101-1623" width="600" />
   </picture>
 </a>
 
@@ -178,8 +178,8 @@ More answers are in the [FAQ](docs/faq.en.md).
 
 Thanks to everyone who has helped build Mika:
 
-<a href="https://github.com/wangzan101/Mika/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=wangzan101/Mika&max=100&columns=12" alt="Contributors" />
+<a href="https://github.com/Mohzh344/Mika/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Mohzh344/Mika&max=100&columns=12" alt="Contributors" />
 </a>
 
 ## License
