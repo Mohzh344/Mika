@@ -3,6 +3,9 @@ build/
 .gradle/
 local.properties
 *.apk
+*.jks
+*.keystore
+*.p12
 .idea/
 *.iml
 .DS_Store

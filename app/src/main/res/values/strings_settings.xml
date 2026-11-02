@@ -12,6 +12,7 @@
     <string name="language_portuguese" translatable="false">Português</string>
     <string name="language_russian" translatable="false">Русский</string>
     <string name="language_indonesian" translatable="false">Bahasa Indonesia</string>
+    <string name="language_arabic" translatable="false">العربية</string>
     <string name="settings_basic">Basic</string>
     <string name="settings_model">Model</string>
     <string name="settings_not_set">Not set</string>

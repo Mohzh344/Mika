@@ -14,31 +14,28 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.wangzan101.mika"
+        applicationId = "com.mohzh344.mika.ar"
         minSdk = 30
         targetSdk = 35
-        versionCode = 34
-        versionName = "0.1.33"
+        versionCode = 35
+        versionName = "0.1.33-ar.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "GIT_HASH", "\"$gitHash\"")
         // 关于页版本号后的 Beta 标记;出正式版时改成 false
         buildConfigField("boolean", "BETA", "true")
+        ndk { abiFilters.add("arm64-v8a") }
     }
 
-    // 沙箱程序只有 arm64 版本(jniLibs/arm64-v8a);APK 不限 ABI,别的设备照常安装、显示「此设备不支持沙箱」。
+    // This independent release targets arm64-v8a only and emits no universal APK.
     // 沙箱程序要从 nativeLibraryDir 直接执行,安装时必须解到磁盘
     packaging { jniLibs { useLegacyPackaging = true } }
 
-    // 发布用的包(perf、release)按架构再出一份:除了全架构包,另出只带 arm64-v8a 原生库的小包。
-    // 两个包代码、资源、版本号、签名都一样,只差 lib/ 下的其他架构;各自是完整 APK,不是一起安装的拆分包。
-    // 产物:app-universal-<类型>.apk、app-arm64-v8a-<类型>.apk。拆分对所有构建类型生效,
-    // 所以只在这次构建要出 perf/release 包时打开,单独构建调试包时产物仍是 app-debug.apk。
     splits {
         abi {
-            isEnable = gradle.startParameter.taskNames.any { Regex("(?i)(perf|release)").containsMatchIn(it) }
+            isEnable = true
             reset()
             include("arm64-v8a")
-            isUniversalApk = true
+            isUniversalApk = false
         }
     }
     // 自带的运行环境(assets/runtime/rootfs.tar.xz,tools/sandbox/build-runtime.py 生成)已是 xz,不再压一遍
@@ -52,7 +49,22 @@ android {
     // 评测任务集(仓库根目录 eval/tasks)打进测试包的 assets,真机评测跑器从那里读题
     sourceSets.getByName("androidTest").assets.srcDir(rootProject.file("eval/tasks"))
 
+    signingConfigs {
+        create("mikaArabicRelease") {
+            storeFile = System.getenv("MIKA_SIGNING_KEYSTORE")?.let { file(it) }
+            storePassword = System.getenv("MIKA_SIGNING_STORE_PASSWORD")
+            keyAlias = System.getenv("MIKA_SIGNING_KEY_ALIAS") ?: "mika-arabic-release"
+            keyPassword = System.getenv("MIKA_SIGNING_KEY_PASSWORD")
+            storeType = "JKS"
+        }
+    }
+
     buildTypes {
+        create("arabicRelease") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("mikaArabicRelease")
+            matchingFallbacks += "release"
+        }
         // 真机验收时并排安装,保留发行版和用户数据;默认构建标识不变。
         if (providers.gradleProperty("devInstall").isPresent) getByName("debug") {
             applicationIdSuffix = ".dev"
