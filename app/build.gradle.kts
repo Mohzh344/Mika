@@ -38,7 +38,7 @@ android {
             isEnable = gradle.startParameter.taskNames.any { Regex("(?i)(perf|release)").containsMatchIn(it) }
             reset()
             include("arm64-v8a")
-            isUniversalApk = true
+            isUniversalApk = !gradle.startParameter.taskNames.any { Regex("(?i)release").containsMatchIn(it) }
         }
     }
     // 自带的运行环境(assets/runtime/rootfs.tar.xz,tools/sandbox/build-runtime.py 生成)已是 xz,不再压一遍
