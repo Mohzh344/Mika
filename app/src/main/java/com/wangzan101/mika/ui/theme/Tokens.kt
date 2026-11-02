@@ -2,6 +2,8 @@ package com.wangzan101.mika.ui.theme
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -74,3 +76,30 @@ object MikaShapes {
     val Tile = RoundedCornerShape(MikaRadius.Tile)
     val Pill = CircleShape
 }
+
+/** Material 3 controls use the same shape and type scale as Mika's custom components. */
+val MikaMaterialShapes = Shapes(
+    extraSmall = MikaShapes.Tile,
+    small = MikaShapes.Button,
+    medium = MikaShapes.Card,
+    large = RoundedCornerShape(28.dp),
+    extraLarge = RoundedCornerShape(32.dp),
+)
+
+val MikaMaterialTypography = Typography(
+    displayLarge = MikaType.LargeTitle,
+    displayMedium = MikaType.LargeTitle,
+    displaySmall = MikaType.LargeTitle,
+    headlineLarge = MikaType.LargeTitle,
+    headlineMedium = MikaType.LargeTitle,
+    headlineSmall = MikaType.Title,
+    titleLarge = MikaType.Title,
+    titleMedium = MikaType.BodyStrong,
+    titleSmall = MikaType.Label,
+    bodyLarge = MikaType.Body,
+    bodyMedium = MikaType.Value,
+    bodySmall = MikaType.Caption,
+    labelLarge = MikaType.BodyStrong,
+    labelMedium = MikaType.Label,
+    labelSmall = MikaType.Hint,
+)

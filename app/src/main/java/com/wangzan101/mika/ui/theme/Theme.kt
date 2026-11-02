@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -98,7 +99,7 @@ fun MikaTheme(dark: Boolean = appearanceDark(), reduceMotion: Boolean = false, c
         LocalMikaColors provides colors,
         LocalReduceMotion provides reduceMotion,
     ) {
-        MaterialTheme(colorScheme = scheme) {
+        MaterialTheme(colorScheme = scheme, typography = MikaMaterialTypography, shapes = MikaMaterialShapes) {
             CompositionLocalProvider(LocalContentColor provides colors.ink, content = content)
         }
     }
@@ -108,13 +109,15 @@ private fun scheme(c: MikaColors): ColorScheme {
     val base = if (c.isDark) darkColorScheme() else lightColorScheme()
     return base.copy(
         primary = c.accent, onPrimary = c.onAccent, primaryContainer = c.accentSoft, onPrimaryContainer = c.accent,
-        secondary = c.accent, onSecondary = c.onAccent,
+        secondary = c.accent, onSecondary = c.onAccent, secondaryContainer = c.accentSoft, onSecondaryContainer = c.accent,
+        tertiary = c.ok, onTertiary = if (c.isDark) c.bg else c.ink, tertiaryContainer = c.okSoft, onTertiaryContainer = c.ok,
         background = c.bg, onBackground = c.ink,
         surface = c.surface, onSurface = c.ink, surfaceVariant = c.fill, onSurfaceVariant = c.ink2,
         surfaceContainerLowest = c.surface, surfaceContainerLow = c.surface, surfaceContainer = c.surface,
-        surfaceContainerHigh = c.surface, surfaceContainerHighest = c.surface, surfaceTint = c.surface,
+        surfaceContainerHigh = c.fill, surfaceContainerHighest = c.fill, surfaceTint = c.accent,
         outline = c.ink3, outlineVariant = c.hair,
-        error = c.bad, onError = c.onAccent,
+        error = if (c.isDark) c.bad else Color(0xFFB3261E),
+        onError = if (c.isDark) c.bg else Color.White,
     )
 }
 
